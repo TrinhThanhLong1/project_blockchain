@@ -13,28 +13,28 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<User> {
-    const user = await this.usersService.getUser(username);
-    if (!user) {
-      throw new HttpException('UN_AUTHORIZED', HttpStatus.UNAUTHORIZED);
-    }
-    if (!compareSync(pass, user.password)) {
-      throw new HttpException('UN_AUTHORIZED', HttpStatus.UNAUTHORIZED);
-    }
-    return user;
-  }
+  // async validateUser(username: string, pass: string): Promise<User> {
+  //   const user = await this.usersService.getUser(username);
+  //   if (!user) {
+  //     throw new HttpException('UN_AUTHORIZED', HttpStatus.UNAUTHORIZED);
+  //   }
+  //   if (!compareSync(pass, user.password)) {
+  //     throw new HttpException('UN_AUTHORIZED', HttpStatus.UNAUTHORIZED);
+  //   }
+  //   return user;
+  // }
 
-  async login(data: LoginDto): Promise<TokenDto> {
-    const user = await this.validateUser(data.username, data.password);
-    const payload = { username: user.username, id: user._id };
-    const access_token = this.jwtService.sign(payload);
-    return {
-      isSuccess: true,
-      access_Token: access_token,
-    };
-  }
+  // async login(data: LoginDto): Promise<TokenDto> {
+  //   const user = await this.validateUser(data.username, data.password);
+  //   const payload = { username: user.username, id: user._id };
+  //   const access_token = this.jwtService.sign(payload);
+  //   return {
+  //     isSuccess: true,
+  //     access_Token: access_token,
+  //   };
+  // }
 
-  async create(data): Promise<User> {
-    return this.usersService.create(data);
-  }
+  // async create(data): Promise<User> {
+  //   return this.usersService.create(data);
+  // }
 }

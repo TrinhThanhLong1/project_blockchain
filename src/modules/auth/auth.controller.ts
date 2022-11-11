@@ -13,27 +13,7 @@ import {
 @Controller('auth-management')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
-
-  @HttpCode(201)
-  @Post('create')
-  @ApiResponse({
-    status: 201,
-    description: 'CreateSuccess',
-    schema: { $ref: getSchemaPath(CreateUserDto) },
-  })
-  @ApiResponse({ status: 400, description: 'Bad Reqequest' })
-  @ApiOperation({ summary: 'Create User' })
-  createUser(@Body() body: CreateUserDto) {
-    const { username, password, birthDay } = body;
-    const data = {
-      username,
-      password: hashSync(password, parseInt(bcryptConfig.saltRound)),
-      birthDay: new Date(birthDay),
-    };
-    return this.authService.create(data);
-  }
-
+  constructor(private authService: AuthService) {};
   @HttpCode(200)
   @ApiResponse({ status: 200, description: 'login' })
   @ApiResponse({ status: 400, description: 'Bad Reqequest' })
@@ -41,6 +21,6 @@ export class AuthController {
   @Post('/login')
   async login(@Body() body: LoginDto) {
     const data = { username: body.username, password: body.password };
-    return this.authService.login(data);
+   // return this.authService.login(data);
   }
 }

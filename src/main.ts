@@ -7,6 +7,7 @@ import { HttpExceptionFilter } from './shared/fillter/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   const swaggerConfig = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('API with NestJS')
@@ -17,6 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
+
   await app.listen(appConfig.port);
 }
 bootstrap();

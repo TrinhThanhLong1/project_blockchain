@@ -3,28 +3,40 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { Document, ObjectId } from 'mongoose';
 
-export type UserDocument = User & Document;
-
+export type NftDocument = Nft & Document;
+type atribute = {
+  train_type: string;
+  value: string;
+};
 @Schema({
   timestamps: true,
+  _id: true,
 })
-export class User {
+export class Nft {
   @Transform(({ value }) => value.toString())
   _id: ObjectId;
 
-  @Prop()
-  @ApiProperty()
-  walletAddress: string;
-
-  @Prop()
+  @Prop({})
   @ApiProperty()
   name: string;
 
   @Prop()
   @ApiProperty()
-  email: string;
+  description: string;
+
+  @Prop()
+  @ApiProperty()
+  image: string;
+
+  @Prop()
+  @ApiProperty()
+  external_url: string;
+
+  @Prop({})
+  @ApiProperty()
+  attributes: [atribute];
 }
 
-const UserSchema = SchemaFactory.createForClass(User);
+const NftSchema = SchemaFactory.createForClass(Nft);
 
-export { UserSchema };
+export { NftSchema };
