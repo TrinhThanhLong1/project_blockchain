@@ -23,5 +23,5 @@ export class NftController {
     const { name, description, external_url, image, attributes } = body;
     const data = { name, description, external_url, image, attributes };
     return this.nftService.createNft(data);
-  }
+  } 
 }
