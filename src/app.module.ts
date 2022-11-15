@@ -7,7 +7,7 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
     NftModule,
     MongooseModule.forRoot(
-      'mongodb+srv://long28:2842000@cluster0.0fqfm73.mongodb.net/project_blockchain?retryWrites=true&w=majority',
+      'mongodb+srv://long:JliFbDS0IRZ650JM@cluster0.0n6blr0.mongodb.net/project_blockchain?retryWrites=true&w=majority',
     ),
   ],
   controllers: [],

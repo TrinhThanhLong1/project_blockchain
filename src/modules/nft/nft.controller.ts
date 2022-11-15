@@ -15,13 +15,4 @@ import { NftService } from './nft.service';
 @ApiTags('Nft')
 export class NftController {
   constructor(private nftService: NftService) {}
-
-  @Post('')
-  @ApiBadRequestResponse(NFT_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
-  @ApiOkResponse(NFT_SWAGGER_RESPONSE.CREATE_SUCCESS)
-  createNft(@Body() body: CreateNftDto) {
-    const { name, description, external_url, image, attributes } = body;
-    const data = { name, description, external_url, image, attributes };
-    return this.nftService.createNft(data);
-  } 
 }

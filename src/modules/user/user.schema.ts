@@ -19,10 +19,6 @@ export class User {
   @Prop()
   @ApiProperty()
   name: string;
-
-  @Prop()
-  @ApiProperty()
-  email: string;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);

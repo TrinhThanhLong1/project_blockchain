@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { Document, ObjectId } from 'mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 
 export type NftDocument = Nft & Document;
-type atribute = {
+type attribute = {
   train_type: string;
   value: string;
 };
@@ -30,11 +30,29 @@ export class Nft {
 
   @Prop()
   @ApiProperty()
-  external_url: string;
+  dna: string;
 
-  @Prop({})
+  @Prop()
   @ApiProperty()
-  attributes: [atribute];
+  edition: number;
+
+  @Prop()
+  @ApiProperty()
+  date: number;
+
+  @Prop({
+    type: 'Array',
+    default: null,
+  })
+  @ApiProperty()
+  attributes: [attribute];
+
+  @Prop({
+    type: mongoose.Types.ObjectId,
+    ref: 'users',
+  })
+  @ApiProperty()
+  userId: ObjectId;
 }
 
 const NftSchema = SchemaFactory.createForClass(Nft);

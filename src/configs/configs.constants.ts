@@ -16,8 +16,8 @@ export const appConfig = {
 };
 
 export const paginationConfig = {
-  pageSize: 2
-}
+  pageSize: 2,
+};
 export const bcryptConfig = {
   saltRound: process.env.BCRYPT_SALT_ROUNDS,
 };
@@ -46,6 +46,4 @@ export const stripeConfig = {
 export const awsBucket = {
   avatarsCategory: process.env.AVATARCATEGORY,
   imgProduct: process.env.IMGPRODUCT,
-}
-
-
+};

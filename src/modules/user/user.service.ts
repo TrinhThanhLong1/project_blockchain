@@ -1,63 +1,121 @@
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateWriteOpResult } from 'mongoose';
-import CreateUserDto from './dto/user.create.dto';
+import { Model } from 'mongoose';
 import UpdateUserDto from './dto/user.update.dto';
-
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { User, UserDocument } from './user.schema';
+import { HttpService } from '@nestjs/axios';
+import { NftService } from '../nft/nft.service';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  wsProvider;
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private readonly httpService: HttpService,
+    private readonly nftService: NftService,
+  ) {
+    this.wsProvider = new WsProvider('ws://127.0.0.1:9944');
+  }
 
-  async create(userCreateDto: CreateUserDto) {
+  hex_to_ascii(str1: string) {
+    const hex = str1.toString();
+    let str = '';
+    for (let n = 0; n < hex.length; n += 2) {
+      str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+    }
+    return str;
+  }
+
+  async create(walletAddress, userData: UpdateUserDto) {
+    const userCurrent = await this.userModel.aggregate([
+      {
+        $match: {
+          walletAddress: walletAddress,
+        },
+      },
+      {
+        $lookup: {
+          from: 'nfts',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'nft',
+        },
+      },
+    ]);
+
+    if (userCurrent.length != 0) {
+      return userCurrent;
+    }
+
+    userData['walletAddress'] = walletAddress;
+    const user = await this.userModel.create(userData);
+    const api = await ApiPromise.create({
+      provider: this.wsProvider,
+    });
+
+    const account: any = await api.query.nftCurrencyPallet.listOwned(
+      walletAddress,
+    );
+
+    const nftArray = [];
+    for (let i = 0; i < account.length; i++) {
+      const nft = await api.query.nftCurrencyPallet.tokenUri(account[i]);
+      const uri = this.hex_to_ascii(nft.toHex());
+      let nftInfor = {};
+      if (uri.length > 2) {
+        const { data } = await lastValueFrom(
+          this.httpService.get<any>(uri.slice(2)).pipe(),
+        );
+        nftInfor = data;
+      }
+      nftInfor['userId'] = user._id;
+      nftArray.push(nftInfor);
+    }
+
+    await this.nftService.createNft(nftArray);
+    return this.userModel.aggregate([
+      {
+        $match: {
+          walletAddress: walletAddress,
+        },
+      },
+      {
+        $lookup: {
+          from: 'nfts',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'nft',
+        },
+      },
+    ]);
+  }
+
+  async update(walletAddress, updateUserDto: UpdateUserDto) {
     try {
-      const user = await this.userModel.create(userCreateDto);
+      await this.userModel.findOneAndUpdate(walletAddress, updateUserDto);
       return {
-        data: user,
+        success: true,
       };
     } catch (error) {
       throw new BadRequestException('bad request exception');
     }
   }
 
-  // async getUser(username: string): Promise<User> {
-  //   try {
-  //     return await this.userModel.findOne({ username: username });
-  //   } catch (error) {
-  //     throw new NotFoundException();
-  //   }
-  // }
+  async check(): Promise<any> {
+    const api = await ApiPromise.create({
+      provider: this.wsProvider,
+    });
+    const account: any = await api.query.nftCurrencyPallet.listOwned(
+      '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+    );
+    const nft = await api.query.nftCurrencyPallet.tokenUri(account[2]);
 
-  // async getList(): Promise<User[]> {
-  //   try {
-  //     return await this.userModel.find();
-  //   } catch (error) {
-  //     throw new NotFoundException();
-  //   }
-  // }
+    const uri = this.hex_to_ascii(nft.toHex());
+    console.log(uri);
+    if (uri.length <= 1) return false;
 
-  // async getOne(id: string): Promise<User> {
-  //   try {
-  //     return await this.userModel.findById(id);
-  //   } catch (error) {
-  //     throw new NotFoundException();
-  //   }
-  // }
-
-  // async updateUser(
-  //   id: string,
-  //   data: UpdateUserDto,
-  // ): Promise<UpdateWriteOpResult> {
-  //   try {
-  //     return await this.userModel.updateOne({ id: id }, data);
-  //   } catch (error) {
-  //     throw new HttpException(error, 400);
-  //   }
-  // }
+    return uri.split(' ');
+  }
 }
