@@ -13,6 +13,8 @@ export const USER_SWAGGER_RESPONSE = {
           {
             _id: '637215e7a2d8f152c3bcaf6a',
             name: 'CNP Students #2205',
+            tokenId:
+              '0xaec8f0c1a57524aab1f5ffb7362e87251e8ee3b1561f1a6af32569266725ffc6',
             description:
               'This NFT collection is fan art of CNP by YouthWeb3Lab Students \n \n CryptoNinja Partners Students (CNPS) is a 6,000 piece collection of CNP characters in various student forms. \n \n Students can become a CNPS holder and interact with the students! Adults, relive your school days and have some fun!',
             image: 'https://nft.web3youth.xyz/images/2205.png',

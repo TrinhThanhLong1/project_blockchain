@@ -63,15 +63,16 @@ export class UserService {
     for (let i = 0; i < account.length; i++) {
       const nft = await api.query.nftCurrencyPallet.tokenUri(account[i]);
       const uri = this.hex_to_ascii(nft.toHex());
-      let nftInfor = {};
+      let nftInfor;
       if (uri.length > 2) {
         const { data } = await lastValueFrom(
           this.httpService.get<any>(uri.slice(2)).pipe(),
         );
         nftInfor = data;
+        nftInfor['userId'] = user._id;
+        nftInfor['tokenId'] = account[i];
+        nftArray.push(nftInfor);
       }
-      nftInfor['userId'] = user._id;
-      nftArray.push(nftInfor);
     }
 
     await this.nftService.createNft(nftArray);
@@ -107,15 +108,13 @@ export class UserService {
     const api = await ApiPromise.create({
       provider: this.wsProvider,
     });
-    const account: any = await api.query.nftCurrencyPallet.listOwned(
-      '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    );
-    const nft = await api.query.nftCurrencyPallet.tokenUri(account[2]);
 
-    const uri = this.hex_to_ascii(nft.toHex());
-    console.log(uri);
-    if (uri.length <= 1) return false;
-
-    return uri.split(' ');
+    const [chain, nodeName, nodeVersion] = await Promise.all([
+      api.rpc.system.chain(),
+      api.rpc.system.name(),
+      api.rpc.system.version()
+    ]);
+  
+    console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
   }
 }

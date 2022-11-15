@@ -30,6 +30,10 @@ export class Nft {
 
   @Prop()
   @ApiProperty()
+  tokenId: string;
+
+  @Prop()
+  @ApiProperty()
   dna: string;
 
   @Prop()
