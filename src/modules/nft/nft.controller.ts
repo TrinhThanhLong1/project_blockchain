@@ -1,13 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import CreateNftDto from './dto/nft.create.dto';
-import { NFT_SWAGGER_RESPONSE } from './nft.constant';
-import { Nft } from './nft.schema';
+import { Controller } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { NftService } from './nft.service';
 
 @ApiBearerAuth()

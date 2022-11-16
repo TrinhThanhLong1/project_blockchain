@@ -36,6 +36,7 @@
     "@nestjs/typeorm": "^8.1.2",
     "@nestjs/websockets": "^8.4.7",
     "@polkadot/api": "^9.7.1",
+    "@polkadot/util": "^10.1.11",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie": "^0.5.1",
     "@types/cron": "^2.0.0",

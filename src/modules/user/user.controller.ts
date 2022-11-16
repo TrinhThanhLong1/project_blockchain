@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Patch, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiOkResponse,
   ApiParam,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
@@ -20,6 +21,7 @@ export class UserController {
   @Post(':walletAddress')
   @ApiBadRequestResponse(USER_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
   @ApiOkResponse(USER_SWAGGER_RESPONSE.CREATE_SUCCESS)
+  @HttpCode(200)
   create(
     @Param('walletAddress') walletAddress: string,
     @Body() body: UpdateUserDto,
@@ -38,10 +40,5 @@ export class UserController {
     const { name } = body;
     const data = { name };
     return this.userService.update(walletAddress, data);
-  }
-
-  @Get('check')
-  check() {
-    return this.userService.check();
   }
 }

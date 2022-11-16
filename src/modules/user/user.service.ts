@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import UpdateUserDto from './dto/user.update.dto';
@@ -14,18 +19,10 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly httpService: HttpService,
+    @Inject(forwardRef(() => NftService))
     private readonly nftService: NftService,
   ) {
     this.wsProvider = new WsProvider('ws://127.0.0.1:9944');
-  }
-
-  hex_to_ascii(str1: string) {
-    const hex = str1.toString();
-    let str = '';
-    for (let n = 0; n < hex.length; n += 2) {
-      str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-    }
-    return str;
   }
 
   async create(walletAddress, userData: UpdateUserDto) {
@@ -46,7 +43,7 @@ export class UserService {
     ]);
 
     if (userCurrent.length != 0) {
-      return userCurrent;
+      return userCurrent[0];
     }
 
     userData['walletAddress'] = walletAddress;
@@ -55,28 +52,25 @@ export class UserService {
       provider: this.wsProvider,
     });
 
-    const account: any = await api.query.nftCurrencyPallet.listOwned(
-      walletAddress,
-    );
-
+    const account: any = await api.query.nftCurrency.listOwned(walletAddress);
     const nftArray = [];
     for (let i = 0; i < account.length; i++) {
-      const nft = await api.query.nftCurrencyPallet.tokenUri(account[i]);
-      const uri = this.hex_to_ascii(nft.toHex());
-      let nftInfor;
+      const nft = await api.query.nftCurrency.tokenUri(account[i]);
+      const uri = this.nftService.hex_to_ascii(nft.toHex());
+      let nftInfor = {};
       if (uri.length > 2) {
         const { data } = await lastValueFrom(
           this.httpService.get<any>(uri.slice(2)).pipe(),
         );
         nftInfor = data;
-        nftInfor['userId'] = user._id;
-        nftInfor['tokenId'] = account[i];
-        nftArray.push(nftInfor);
       }
+      nftInfor['userId'] = user._id;
+      nftInfor['tokenId'] = account[i];
+      nftArray.push(nftInfor);
     }
 
     await this.nftService.createNft(nftArray);
-    return this.userModel.aggregate([
+    const res = await this.userModel.aggregate([
       {
         $match: {
           walletAddress: walletAddress,
@@ -91,6 +85,7 @@ export class UserService {
         },
       },
     ]);
+    return res[0];
   }
 
   async update(walletAddress, updateUserDto: UpdateUserDto) {
@@ -104,17 +99,7 @@ export class UserService {
     }
   }
 
-  async check(): Promise<any> {
-    const api = await ApiPromise.create({
-      provider: this.wsProvider,
-    });
-
-    const [chain, nodeName, nodeVersion] = await Promise.all([
-      api.rpc.system.chain(),
-      api.rpc.system.name(),
-      api.rpc.system.version()
-    ]);
-  
-    console.log(`You are connected to chain ${chain} using ${nodeName} v${nodeVersion}`);
+  async getOne(walletAddress: string) {
+    return this.userModel.findOne({ walletAddress: walletAddress });
   }
 }
