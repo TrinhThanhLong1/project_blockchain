@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Listing, ListingDocument } from './listing.schema';
 import CreateListingDto from './dto/listingcreate.dto';
+import UpdateListingDto from './dto/listring.update.dto';
+import { QueryParamDto } from '../entity/query-param.dto';
 
 @Injectable()
 export class ListingService {
@@ -12,5 +14,43 @@ export class ListingService {
 
   async createListing(createListing: CreateListingDto) {
     return this.listingModel.create(createListing);
+  }
+
+  async updateListing(id: string, updateListingDto: UpdateListingDto) {
+    try {
+      await this.listingModel.findByIdAndUpdate(id, updateListingDto);
+      return {
+        data: {
+          success: true,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException();
+    }
+  }
+
+  getList(walletAddress: string, query: QueryParamDto) {
+    const pageSize = +query.pageSize || 5;
+    const pageIndex = +query.pageIndex || 1;
+    let condition;
+    if (query.tokenId) {
+      condition = {
+        tokenId: query.tokenId,
+      };
+    }
+    return this.listingModel.aggregate([
+      {
+        $match: {
+          lender: walletAddress,
+          ...condition,
+        },
+      },
+      {
+        $skip: (pageIndex - 1) * pageSize,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
   }
 }

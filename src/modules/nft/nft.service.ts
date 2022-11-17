@@ -3,6 +3,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { lastValueFrom } from 'rxjs';
+import { QueryParamDto } from '../entity/query-param.dto';
 import { UserService } from '../user/user.service';
 import CreateNftDto, { AddNftDto, SetUriNftDto } from './dto/nft.create.dto';
 
@@ -21,6 +22,32 @@ export class NftService {
     return {
       data: nft,
     };
+  }
+
+  async getNFTWithUser(id: string, query: QueryParamDto) {
+    const pageSize = +query.pageSize || 5;
+    const pageIndex = +query.pageIndex || 1;
+    let condition;
+    if (query.tokenId) {
+      condition = {
+        tokenId: query.tokenId,
+      };
+    }
+    const nft = await this.nftModel.aggregate([
+      {
+        $match: {
+          userId: id,
+          ...condition,
+        },
+      },
+      {
+        $skip: (pageIndex - 1) * pageSize,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
+    return nft;
   }
 
   async addNft(data: AddNftDto) {

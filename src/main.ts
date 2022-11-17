@@ -1,48 +1,18 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ApiPromise, WsProvider } from '@polkadot/api';
+
 import { AppModule } from './app.module';
 import { appConfig } from './configs/configs.constants';
 import { HttpExceptionFilter } from './shared/fillter/http-exception.filter';
 import { NftService } from './modules/nft/nft.service';
-
-async function listenPolkadot(nftService: NftService) {
-  const wsProvider = new WsProvider('ws://127.0.0.1:9944');
-  const api = await ApiPromise.create({
-    provider: wsProvider,
-  });
-  api.query.system.events((events) => {
-    events.forEach((record) => {
-      const { event } = record;
-      if (event.section === 'nftCurrency' && event.method === 'Mint') {
-        const enventData = [];
-        event.data.forEach((data) => {
-          enventData.push(data.toString());
-        });
-        const data = {
-          walletAddress: enventData[0],
-          tokenId: enventData[1],
-        };
-        nftService.addNft(data);
-      } else if (event.section === 'nftCurrency' && event.method === 'SetUri') {
-        const enventData = [];
-        event.data.forEach((data) => {
-          enventData.push(data.toString());
-        });
-        const data = {
-          tokenId: enventData[0],
-          uri: enventData[1],
-        };
-        nftService.setUri(data);
-      }
-    });
-  });
-}
+import { OrderService } from './modules/order/order.service';
+import { listenPolkadot } from './utils/listenPolkadot';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const nftService = app.get<NftService>(NftService);
+  const orderService = app.get<OrderService>(OrderService);
   const swaggerConfig = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('API with NestJS')
@@ -55,6 +25,6 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(appConfig.port);
-  listenPolkadot(nftService).catch(console.error);
+  listenPolkadot(nftService, orderService).catch(console.error);
 }
 bootstrap();

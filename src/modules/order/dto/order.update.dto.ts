@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpdateListingDto {
+export class UpdateOrderDto {
   @IsOptional()
   @IsString()
   @ApiProperty({
@@ -47,4 +47,4 @@ export class UpdateListingDto {
   signature?: string;
 }
 
-export default UpdateListingDto;
+export default UpdateOrderDto;

@@ -2,27 +2,22 @@ import { swaggerSchemaExample } from '../../utils/swagger_schema';
 export const LISTING_SWAGGER_RESPONSE = {
   CREATE_SUCCESS: swaggerSchemaExample(
     {
-      data: {
-        name: 'project Atama',
-        description: '666 unconvention beings',
-        image: 'ipfs://QmWxTVdAeC3PVDJ6NWb6HFruiWfXrxBCE1z4Z1M71VgB2P/385.png"',
-        external_url: 'https://projectatama.io/',
-        attributes: [
-          {
-            trait_type: 'Gender',
-            value: 'Female',
-          },
-          {
-            trait_type: 'BACKGROUND',
-            value: 'Background 1',
-          },
-        ],
-        _id: '6368b079f98044345709e0d7',
-        __v: 0,
-      },
+      lender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+      tokenId:
+        '0xd95e05e709d5e16b9f88c63992651e2c521fb2d3ff03c2b1c170fa3d3ac4e3aa',
+      fee: 100000000000,
+      due_date: 1766287472,
+      paid_type: 1,
+      message: 'string',
+      signature: 'string',
+      _id: '6375a4c850565953b2c911bf',
+      createdAt: '2022-11-17T03:04:40.836Z',
+      updatedAt: '2022-11-17T03:04:40.836Z',
+      __v: 0,
     },
     'Create success',
   ),
+
   UPDATE_SUCCESS: swaggerSchemaExample(
     {
       data: {
@@ -31,28 +26,52 @@ export const LISTING_SWAGGER_RESPONSE = {
     },
     'Update success',
   ),
-  BAD_REQUEST_EXCEPTION: swaggerSchemaExample(
-    {
-      message: 'bad exception',
-      code: 'sys00001',
-      statusCode: 400,
-    },
-    'bad request exception',
-  ),
-  NOT_FOUND_EXCEPTION: swaggerSchemaExample(
-    {
-      message: 'not found exception',
-      code: 'us00001',
-      statusCode: 404,
-    },
-    'not found exception',
-  ),
-  DELETE_SUCCESS: swaggerSchemaExample(
-    {
-      data: {
-        success: true,
+
+  GET_LISTING: swaggerSchemaExample(
+    [
+      {
+        _id: '6375a4c850565953b2c911bf',
+        lender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+        tokenId:
+          '0xd95e05e709d5e16b9f88c63992651e2c521fb2d3ff03c2b1c170fa3d3ac4e3aa',
+        fee: 100000000000,
+        due_date: 1766287472,
+        paid_type: 1,
+        message: 'string',
+        signature: '1111111',
+        createdAt: '2022-11-17T03:04:40.836Z',
+        updatedAt: '2022-11-17T03:16:29.944Z',
+        __v: 0,
       },
-    },
-    'Delete success',
+      {
+        _id: '6375bb3878bd1c3cd57b64b4',
+        lender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+        tokenId:
+          '0x7c66db7f2a0fdbfbf17dd24f39a08000db70492aec11772086b834f76503afc6',
+        fee: 100000000000,
+        due_date: 1766287472,
+        paid_type: 1,
+        message: 'string',
+        signature: '1111111',
+        createdAt: '2022-11-17T03:04:40.836Z',
+        updatedAt: '2022-11-17T03:16:29.944Z',
+        __v: 0,
+      },
+      {
+        _id: '6375bb4078bd1c3cd57b64b5',
+        lender: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+        tokenId:
+          '0x7c66db7f2a0fdbfbf17dd24f39a08000db70492aec11772086b834f76503af27',
+        fee: 100000000000,
+        due_date: 1766287472,
+        paid_type: 1,
+        message: 'string',
+        signature: '1111111',
+        createdAt: '2022-11-17T03:04:40.836Z',
+        updatedAt: '2022-11-17T03:16:29.944Z',
+        __v: 0,
+      },
+    ],
+    'get success',
   ),
 };

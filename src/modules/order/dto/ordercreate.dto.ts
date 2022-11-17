@@ -1,42 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpdateListingDto {
-  @IsOptional()
+export class CreateOrderDto {
+  @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
   })
-  lender?: string;
+  lender: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty({
     example:
       '0xd95e05e709d5e16b9f88c63992651e2c521fb2d3ff03c2b1c170fa3d3ac4e3aa',
   })
-  tokenId?: string;
+  tokenId: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @ApiProperty({
     example: 100000000000,
   })
-  fee?: number;
+  fee: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @ApiProperty({
     example: 1766287472,
   })
-  due_date?: number;
+  due_date: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  paid_type?: number;
+  paid_type: number;
 
   @IsOptional()
   @ApiProperty()
@@ -47,4 +47,17 @@ export class UpdateListingDto {
   signature?: string;
 }
 
-export default UpdateListingDto;
+export class AddOrderDto {
+  @IsOptional()
+  @IsString()
+  lender?: string;
+
+  @IsOptional()
+  @IsString()
+  borrower?: string;
+
+  @IsOptional()
+  @IsString()
+  hashId?: string;
+}
+export default CreateOrderDto;

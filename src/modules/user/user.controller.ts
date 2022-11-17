@@ -1,15 +1,23 @@
-import { Body, Controller, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiOkResponse,
   ApiParam,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { USER_SWAGGER_RESPONSE } from './user.constant';
 import UpdateUserDto from './dto/user.update.dto';
+import { QueryParamDto } from '../entity/query-param.dto';
 
 @ApiBearerAuth()
 @Controller('users')
@@ -25,9 +33,10 @@ export class UserController {
   create(
     @Param('walletAddress') walletAddress: string,
     @Body() body: UpdateUserDto,
+    @Query() query: QueryParamDto,
   ) {
     const data = { name: body.name };
-    return this.userService.create(walletAddress, data);
+    return this.userService.create(walletAddress, data, query);
   }
 
   @Patch(':walletAddress')

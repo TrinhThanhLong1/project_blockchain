@@ -12,6 +12,7 @@ import { User, UserDocument } from './user.schema';
 import { HttpService } from '@nestjs/axios';
 import { NftService } from '../nft/nft.service';
 import { lastValueFrom } from 'rxjs';
+import { QueryParamDto } from '../entity/query-param.dto';
 
 @Injectable()
 export class UserService {
@@ -25,27 +26,32 @@ export class UserService {
     this.wsProvider = new WsProvider('ws://127.0.0.1:9944');
   }
 
-  async create(walletAddress, userData: UpdateUserDto) {
-    const userCurrent = await this.userModel.aggregate([
+  async getUser(walletAddress: string, query: QueryParamDto) {
+    const userCurrent = await this.userModel.findOne({
+      walletAddress: walletAddress,
+    });
+    if (!userCurrent) return [];
+    const nft = await this.nftService.getNFTWithUser(userCurrent._id, query);
+    return this.userModel.aggregate([
       {
         $match: {
-          walletAddress: walletAddress,
+          _id: userCurrent._id,
         },
       },
       {
-        $lookup: {
-          from: 'nfts',
-          localField: '_id',
-          foreignField: 'userId',
-          as: 'nft',
+        $addFields: {
+          nfts: nft,
         },
       },
     ]);
+  }
 
-    if (userCurrent.length != 0) {
+  async create(walletAddress, userData: UpdateUserDto, query: QueryParamDto) {
+    const userCurrent = await this.getUser(walletAddress, query);
+
+    if (userCurrent.length > 0) {
       return userCurrent[0];
     }
-
     userData['walletAddress'] = walletAddress;
     const user = await this.userModel.create(userData);
     const api = await ApiPromise.create({
@@ -70,21 +76,7 @@ export class UserService {
     }
 
     await this.nftService.createNft(nftArray);
-    const res = await this.userModel.aggregate([
-      {
-        $match: {
-          walletAddress: walletAddress,
-        },
-      },
-      {
-        $lookup: {
-          from: 'nfts',
-          localField: '_id',
-          foreignField: 'userId',
-          as: 'nft',
-        },
-      },
-    ]);
+    const res = await this.getUser(walletAddress, query);
     return res[0];
   }
 
