@@ -11,6 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -27,6 +28,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post(':walletAddress')
+  @ApiOperation({ summary: 'api get user with nft ' })
   @ApiBadRequestResponse(USER_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
   @ApiOkResponse(USER_SWAGGER_RESPONSE.CREATE_SUCCESS)
   @HttpCode(200)
@@ -43,6 +45,7 @@ export class UserController {
   @ApiParam({
     name: 'walletAddress',
   })
+  @ApiOperation({ summary: ' update user' })
   @ApiBadRequestResponse(USER_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
   @ApiOkResponse(USER_SWAGGER_RESPONSE.UPDATE_SUCCESS)
   update(@Param('walletAddress') walletAddress, @Body() body: UpdateUserDto) {

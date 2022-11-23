@@ -3,6 +3,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { USER_SWAGGER_RESPONSE } from '../user/user.constant';
@@ -18,6 +19,7 @@ export class OrderController {
   constructor(private orderService: OrderService) {}
 
   @Post('')
+  @ApiOperation({ summary: 'create order cái này có sự kiện nghe rồi' })
   @ApiBadRequestResponse(USER_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
   @ApiOkResponse(Order_SWAGGER_RESPONSE.CREATE_SUCCESS)
   createOrder(@Body() createOrder: CreateOrderDto) {

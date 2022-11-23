@@ -53,4 +53,54 @@ export class ListingService {
       },
     ]);
   }
+
+  async cancel(tokenId: string) {
+    try {
+      await this.listingModel.deleteOne({ tokenId: tokenId });
+    } catch (error) {
+      throw new BadRequestException();
+    }
+    return {
+      data: {
+        Delete: true,
+      },
+    };
+  }
+
+  getNft(query: QueryParamDto) {
+    const pageSize = +query.pageSize || 5;
+    const pageIndex = +query.pageIndex || 1;
+    let condition;
+    if (query.tokenId) {
+      condition = {
+        tokenId: query.tokenId,
+      };
+    }
+    return this.listingModel.aggregate([
+      {
+        $match: {
+          ...condition,
+        },
+      },
+      {
+        $lookup: {
+          from: 'nfts',
+          localField: 'tokenId',
+          foreignField: 'tokenId',
+          as: 'nfts',
+        },
+      },
+      {
+        $project: {
+          nfts: 1,
+        },
+      },
+      {
+        $skip: (pageIndex - 1) * pageSize,
+      },
+      {
+        $limit: pageSize,
+      },
+    ]);
+  }
 }
