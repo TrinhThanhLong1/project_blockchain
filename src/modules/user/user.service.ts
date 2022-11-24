@@ -13,6 +13,7 @@ import { HttpService } from '@nestjs/axios';
 import { NftService } from '../nft/nft.service';
 import { lastValueFrom } from 'rxjs';
 import { QueryParamDto } from '../entity/query-param.dto';
+import CreateNftDto from '../nft/dto/nft.create.dto';
 
 @Injectable()
 export class UserService {
@@ -63,15 +64,16 @@ export class UserService {
     for (let i = 0; i < account.length; i++) {
       const nft = await api.query.nftCurrency.tokenUri(account[i]);
       const uri = this.nftService.hex_to_ascii(nft.toHex());
-      let nftInfor = {};
+      let nftInfor: CreateNftDto;
       if (uri.length > 2) {
         const { data } = await lastValueFrom(
           this.httpService.get<any>(uri.slice(2)).pipe(),
         );
         nftInfor = data;
       }
-      nftInfor['userId'] = user._id;
-      nftInfor['tokenId'] = account[i];
+      nftInfor.userId = user._id;
+      nftInfor.tokenId = account[i];
+      nftInfor.walletAddress = user.walletAddress;
       nftArray.push(nftInfor);
     }
 

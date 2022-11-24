@@ -12,6 +12,7 @@ export const USER_SWAGGER_RESPONSE = {
         {
           _id: '637215e7a2d8f152c3bcaf6a',
           name: 'CNP Students #2205',
+          walletAddress: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
           tokenId:
             '0xaec8f0c1a57524aab1f5ffb7362e87251e8ee3b1561f1a6af32569266725ffc6',
           description:

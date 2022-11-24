@@ -34,6 +34,10 @@ export class Nft {
 
   @Prop()
   @ApiProperty()
+  walletAddress: string;
+
+  @Prop()
+  @ApiProperty()
   dna: string;
 
   @Prop()

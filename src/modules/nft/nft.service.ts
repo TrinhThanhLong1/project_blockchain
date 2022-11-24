@@ -54,8 +54,14 @@ export class NftService {
     const user = await this.userService.getOne(data.walletAddress);
     if (user) {
       data.userId = user._id;
+      data.walletAddress = data.walletAddress;
       return this.nftModel.create(data);
     }
+  }
+
+  async getNft(tokenId: string) {
+     return this.nftModel.findOne({tokenId: tokenId});
+
   }
 
   async setUri(setUriNftDto: SetUriNftDto) {
@@ -68,9 +74,7 @@ export class NftService {
         { tokenId: setUriNftDto.tokenId },
         data,
       );
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   hex_to_ascii(str1: string) {

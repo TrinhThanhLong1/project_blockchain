@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ObjectId } from 'mongoose';
 
 type atribute = {
@@ -8,35 +14,35 @@ type atribute = {
 };
 
 export class CreateNftDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({
     example: 'project Atama',
   })
-  name: string;
+  name?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({
     example: '666 unconvention beings',
   })
-  description: string;
+  description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({
     example: 'ipfs://QmWxTVdAeC3PVDJ6NWb6HFruiWfXrxBCE1z4Z1M71VgB2P/385.png"',
   })
-  image: string;
+  image?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty({
     example: 'https://projectatama.io/',
   })
-  external_url: string;
+  external_url?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ApiProperty({
     example: [
@@ -50,7 +56,27 @@ export class CreateNftDto {
       },
     ],
   })
-  attributes: [atribute];
+  attributes?: [atribute];
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    example: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
+  })
+  walletAddress: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    example:
+      '0xd95e05e709d5e16b9f88c63992651e2c521fb2d3ff03c2b1c170fa3d3ac4e3aa',
+  })
+  tokenId: string;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @ApiProperty()
+  userId: ObjectId;
 }
 
 export class AddNftDto {
@@ -79,7 +105,8 @@ export class SetUriNftDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
-    example: '0x0b4be8201a103499c7e369ef84b0716f8e975becdd3a003bdedb6a54d6e973fc',
+    example:
+      '0x0b4be8201a103499c7e369ef84b0716f8e975becdd3a003bdedb6a54d6e973fc',
   })
   tokenId: string;
 
