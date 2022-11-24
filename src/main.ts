@@ -23,7 +23,11 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
-
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   await app.listen(appConfig.port);
   listenPolkadot(nftService, orderService).catch(console.error);
 }
